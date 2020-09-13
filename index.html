@@ -14,16 +14,15 @@
 
                 <form id="js-form-multiple">
                     <label for="js-search-multiple">Search for a State by Abbreviation! 
-                        <p>To search for multiple states
-                        please separate your searches with a comma. </p>
                     </label>
                     <input type="text" id="js-search-multiple" name="js-search-multiple">
-                    <br><br>
-            <label for="max-results">Maximum results to return</label>
-           
+                    <p>To search for multiple states
+                        please separate your searches with a comma. </p>     
+            <label id="max-results">Maximum results to return</label>
             <input type="number" name="max-results" id="js-max-results" value="10">
-
             <input type="submit" value="Go!">
+            <p>To include all results for multiple states,
+                you may need to increase the size of the search. </p>
         </form>
 
         <p id="js-error-message" class="error-message"></p>
