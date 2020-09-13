@@ -1,47 +1,31 @@
 'use strict';
 
-// National Park API key
 const apiKey = '6rvYbQvg3dqTf9zQDDqdrAQPEO1Y8yN9cz1UXELl'; 
-const searchURL = 'https://developer.nps.gov/api/v1/parks?stateCode=';
-//'https://developer.nps.gov/api/v1/stateCode=me&api_key=INSERT-API-KEY-HERE'
+const searchUrl = 'https://developer.nps.gov/api/v1/parks?';
+
 
 function formatQueryParams(params) {
  const queryItems = Object.keys(params)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+   .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+   console.log(queryItems)
   return queryItems.join('&');
 }
 
-function displayResults(responseJson) {
-  // if there are previous results, remove them
-  console.log(responseJson);
-  $('#results-list').empty();
-  // iterate through the items array
-  for (let i = 0; i < responseJson.data.length; i++){
-    // for each park object in the items array, add a list item to the results 
-    //list with the park name, description, and url
-    let index = 0;
-    $('#results-list').append(
-      `<li><h3>${responseJson.data[i].fullName}</h3>
-      <h4>${responseJson.data[i].addresses[index].line1}, ${responseJson.data[i].addresses[index].city}, ${responseJson.data[i].addresses[index].stateCode}</h4>
-      <p>${responseJson.data[i].description}</p>
-      <p>${responseJson.data[i].url}</p>
-      </li>`
-    )};
-  //display the results section  
-  $('#results').removeClass('hidden');
-};
 
-function getParksList(limit=50) {
-  const multipleStateSearch = $('#js-search-multiple').val();
+function getParksList(query, limit=50) {
 
- //console.log(multipleStateSearch);
+ const params = {
+  stateCode: query,
+  limit,
+  api_key: apiKey,
 
-let stateSearch = multipleStateSearch.split(',');
-//console.log(stateSearch);
+ };
 
-for( let i = 0; i < stateSearch.length; i++){
-  const url = searchURL + stateSearch[i] + '&api_key='+ apiKey;
  
+
+ let queryString = formatQueryParams(params)
+ const url = searchUrl  + queryString;
+ console.log(url);
 
   fetch(url)
   .then(response => {
@@ -57,11 +41,24 @@ for( let i = 0; i < stateSearch.length; i++){
 }
 
 
-  const params = {
-   limit,
+function displayResults(responseJson) {
+  
+  console.log(responseJson);
+  $('#results-list').empty();
+  // iterate through the items array
+  $('#results').removeClass('hidden');
+  for (let i = 0; i < responseJson.data.length; i++){
+    let index = 0;
+    
+          $('#results-list').append(
+            `<li><h3>${responseJson.data[i].fullName}</h3>
+            <h4>${responseJson.data[i].addresses[index].line1}, ${responseJson.data[i].addresses[index].city}, ${responseJson.data[i].addresses[index].stateCode}</h4>
+            <p>${responseJson.data[i].description}</p>
+            <p>${responseJson.data[i].url}</p>
+            </li>`
+          )
+         
   };
-
-  const queryString = formatQueryParams(params)
 
 }
 
@@ -69,9 +66,9 @@ for( let i = 0; i < stateSearch.length; i++){
 function watchForm() {
   $('form').submit(event => {
     event.preventDefault();
-    const limit = $('#js-max-results').val();
-    const multipleStateSearch = $('#js-search-multiple').val();
-    getParksList(multipleStateSearch, limit);
+   const limit = $('#js-max-results').val();
+    const query = $('#js-search-multiple').val();
+    getParksList(query, limit);
   });
 }
 
